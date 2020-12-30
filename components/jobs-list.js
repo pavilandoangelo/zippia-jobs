@@ -1,8 +1,8 @@
 export default function JobsList(props) {
-  console.log("props >>> ", props);
   const { jobs } = props;
-  console.log("jobs >>> ", jobs);
 
+  // Creating a mark up for the shortDesc data to display
+  // the html format by setting it dangerouslySetInnerHTML in the html
   let createMarkup = (htmlData) => {
     htmlData ? htmlData : "";
     return { __html: htmlData };
@@ -63,7 +63,7 @@ export default function JobsList(props) {
                   <div className="flex-1 mt-2">
                     <div className="flex flex-row space-x-2 text-left">
                       <div className="flex">
-                        <span className="text-base font-light tracking-wider antialiased">{ postedDate ? postedDate : ""}</span>
+                        <span className="text-base font-light tracking-wider antialiased">{postedDate ? postedDate : ""}</span>
                       </div>
                       {/* Add condition for showing the new badge for new job posted. */}
                       {showNewJobBedge && (
