@@ -29,7 +29,7 @@ function Jobs({ jobs }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="font-sans px-2.5">
+      <main className="font-sans px-10">
         <div className="flex content-center mt-8 mb-4 justify-start space-x-3">
           <p className="text-2xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl text-black-600 tracking-wide font-medium antialiased">
             BUSINESS ANALYST
@@ -40,7 +40,7 @@ function Jobs({ jobs }) {
         <div className="flex flex-col md:flex-row lg:flex-row xl:flex-row 2xl:flex-row flex-wrap md:space-x-3 lg:space-x-3 xl:space-x-3 2xl:space-x-3">
           <div className="flex-grow md:flex-initial lg:flex-initial xl:flex-initial 2xl:flex-initial mt-3">
             <button
-              class="dropdown:block relative px-3 py-2 text-sm font-semibold leading-relaxed text-gray-800 transition-colors duration-150 bg-white border border-gray-300 rounded-lg focus:outline-none hover:border-gray-600 focus:shadow-outline focus:border-gray-900"
+              className="dropdown:block relative px-3 py-2 text-sm font-semibold leading-relaxed text-gray-800 transition-colors duration-150 bg-white border border-gray-300 rounded-lg focus:outline-none hover:border-gray-600 focus:shadow-outline focus:border-gray-900"
               role="navigation"
               aria-haspopup="true"
             >
@@ -65,7 +65,11 @@ function Jobs({ jobs }) {
                 {
                   companyName.map(name => {
                     return (
-                      <li className="inline-block text-sm w-full px-2 py-1 font-medium text-gray-600 transition-colors duration-150 rounded-md hover:text-gray-900 focus:outline-none focus:shadow-outline hover:bg-gray-100" onClick={handleFilterByCompanyName(name)}>
+                      <li
+                        className="inline-block text-sm w-full bg-gray-100 px-2 py-1 font-medium text-gray-600 transition-colors duration-150 rounded-md hover:text-gray-900 focus:outline-none focus:shadow-outline hover:bg-gray-100"
+                        onClick={() => {handleFilterByCompanyName(name)}}
+                        key={name}
+                      >
                         {name}
                       </li>
                     )
