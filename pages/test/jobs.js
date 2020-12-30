@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Layout from "../../components/layout";
 
-function Jobs({jobs}) {
+function Jobs({ jobs }) {
   const router = useRouter();
   console.log("jobs >>> ", jobs);
 
@@ -19,30 +19,34 @@ function Jobs({jobs}) {
 
       <main className="font-sans px-2.5">
         <div className="flex content-center mt-8 mb-4 justify-start space-x-3">
-          <p className="text-2xl md:text-5xl lg:text-5xl xl:text-5xl text-black-600 tracking-wide font-medium">
+          <p className="text-2xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl text-black-600 tracking-wide font-medium antialiased">
             BUSINESS ANALYST
           </p>
-          <p className="text-2xl md:text-4xl lg:text-4xl xl:text-4xl text-gray-400 self-center md:self-end lg:self-end xl:self-end tracking-normal font-normal">Jobs</p>
+          <p className="text-2xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-4xl text-gray-400 self-center md:self-end lg:self-end xl:self-end 2xl:self-end tracking-normal font-normal antialiased">Jobs</p>
         </div>
         <div className="border-t-2 border-gray-100"></div>
-        <div className="flex flex-col md:flex-row lg:flex-row xl:flex-row flex-wrap md:space-x-3 lg:space-x-3 xl:space-x-3">
-          <div className="flex-grow md:flex-initial lg:flex-initial xl:flex-initial mt-3">
-            <button className="w-full rounded-md bg-blue-600 text-white font-normal tracking-wide text-xl px-3 py-2">Company Namesssssss</button>
+        <div className="flex flex-col md:flex-row lg:flex-row xl:flex-row 2xl:flex-row flex-wrap md:space-x-3 lg:space-x-3 xl:space-x-3 2xl:space-x-3">
+          <div className="flex-grow md:flex-initial lg:flex-initial xl:flex-initial 2xl:flex-initial mt-3">
+            <button className="w-full rounded-md bg-blue-600 text-white font-normal tracking-wide text-xl px-3 py-2 antialiased">Company Name1</button>
           </div>
-          <div className="flex-grow md:flex-initial lg:flex-initial xl:flex-initial mt-3">
-            <button className="w-full rounded-md bg-blue-600 text-white font-normal tracking-wide text-xl px-3 py-2">Company Name</button>
+          <div className="flex-grow md:flex-initial lg:flex-initial xl:flex-initial 2xl:flex-initial mt-3">
+            <button className="w-full rounded-md bg-blue-600 text-white font-normal tracking-wide text-xl px-3 py-2 antialiased">Company Name</button>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 mt-5">
           <div className="bg-white border rounded-lg overflow-hidden p-3">
             <div className="flex flex-col divide-y divide-gray-200">
               <div className="w-full flex flex-col mb-4">
-                <div className="h-1/3 w-1/2">
-                  <img
+                <div className={`h-1/3 ${true ? 'w-1/3' : 'w-1/4'}`}>
+                  {/* Add condition if the data has company logo or not. */}
+                  {true ? <img
                     src="https://www.aitworldwide.com/images/files/image/Media-Center/Low-Res/AIT-Worldwide-Logistics-Logo-Low-Res.jpg"
                     alt=""
                     className="w-full h-full rounded-md object-cover"
-                  />
+                  /> : <div className="rounded-md bg-blue-500 text-center py-5 text-lg">
+                      <span className="text-white font-semibold antialiased">M</span>
+                    </div>
+                  }
                 </div>
                 <div className="mt-2 mb-0">
                   <span className="text-base font-medium tracking-wide antialiased text-gray-800">AIT Worldwide Logistics</span>
@@ -60,8 +64,22 @@ function Jobs({jobs}) {
                 </p>
               </div>
               <div className="w-full flex flex-row space-x-3">
-                <div className="flex-auto mt-2">5d ago</div>
-                <div className="flex-auto mt-2">estimatedSalary</div>
+                <div className="flex-1 mt-2">
+                  <div className="flex flex-row space-x-2 text-left">
+                    <div className="flex">
+                      <span className="text-base font-light tracking-wider antialiased">5d ago</span>
+                    </div>
+                    {/* Add condition for showing the new badge for new job posted. */}
+                    {true && (
+                      <div className="bg-green-500 text-white p-1 rounded items-center leading-none flex-initial text-center">
+                        <span className="text-xs font-light text-white tracking-wider antialiased">NEW</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-1 mt-2 text-right">
+                  <span className="text-base font-light tracking-wider antialiased">$65,000 yearly est.</span>
+                </div>
               </div>
             </div>
           </div>
