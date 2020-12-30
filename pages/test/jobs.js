@@ -9,7 +9,9 @@ function Jobs({ jobs }) {
   const [state, setState] = useState({
     jobsList: jobs ? jobs.slice(0, 10) : [],
   });
-  // console.log("jobs >>> ", jobs);
+  const companyName = jobs.map(job => job.companyName);
+  console.log("companyName >>> ", companyName);
+  console.log("jobs >>> ", jobs);
   console.log("state.jobsList >>> ", state.jobsList);
 
   if (router.isFallback) {
