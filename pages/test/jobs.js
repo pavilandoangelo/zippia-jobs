@@ -4,10 +4,14 @@ import Layout from "../../components/layout";
 
 function Jobs({ jobs }) {
   const router = useRouter();
-  console.log("jobs >>> ", jobs);
+  // console.log("jobs >>> ", jobs);
 
   if (router.isFallback) {
     return <h1>Loading...</h1>;
+  }
+
+  let createMarkup = () => {
+    return { __html: 'Description of Work\n\n\nThis position has been designated as Exempt in accordance with North Carolina General Statute § 12' };
   }
 
   return (
@@ -33,7 +37,7 @@ function Jobs({ jobs }) {
             <button className="w-full rounded-md bg-blue-600 text-white font-normal tracking-wide text-xl px-3 py-2 antialiased">Company Name</button>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 mt-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 mt-5 mb-10">
           <div className="bg-white border rounded-lg overflow-hidden p-3">
             <div className="flex flex-col divide-y divide-gray-200">
               <div className="w-full flex flex-col mb-4">
@@ -41,7 +45,7 @@ function Jobs({ jobs }) {
                   {/* Add condition if the data has company logo or not. */}
                   {true ? <img
                     src="https://www.aitworldwide.com/images/files/image/Media-Center/Low-Res/AIT-Worldwide-Logistics-Logo-Low-Res.jpg"
-                    alt=""
+                    alt="Company Logo"
                     className="w-full h-full rounded-md object-cover"
                   /> : <div className="rounded-md bg-blue-500 text-center py-5 text-lg">
                       <span className="text-white font-semibold antialiased">M</span>
@@ -58,7 +62,10 @@ function Jobs({ jobs }) {
                   <span className="text-lg font-medium tracking-wide leading-tight antialiased text-black">Business Systems Analyst - North America</span>
                 </div>
               </div>
-              <div className="w-full mb-3 flex flex-col">
+              <div className="w-full mb-3 flex flex-row">
+                <div className="text-base mt-2 font-normal tracking-wide leading-tight antialiased text-black italic whitespace-pre-wrap" dangerouslySetInnerHTML={createMarkup()}></div>
+              </div>
+              <div className="w-full mb-3 flex flex-row">
                 <p className="w-full mt-3 text-base font-normal tracking-normal leading-tight anitialiased text-gray-800 clamp-2 overflow-ellipsis overflow-hidden">
                   Skills: Customer Requirements,Workflow,AIT,GED,Project Stakeholders,Technical Documentation,Product Offerings,Service Desk,Business Systems,Knowledge Base
                 </p>
@@ -98,7 +105,7 @@ function Jobs({ jobs }) {
   )
 }
 
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
 
   // request body for fetching
   const requestBody = {
