@@ -5,7 +5,6 @@ import Layout from "../../components/layout";
 import JobsList from "../../components/jobs-list";
 
 function Jobs({ jobs }) {
-  const { }
   const router = useRouter();
   const [state, setState] = useState({
     jobsList: jobs ? jobs.slice(0, 10) : [],
