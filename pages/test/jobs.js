@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from "../../components/layout";
 import JobsList from "../../components/jobs-list";
 import moment from "moment";
@@ -8,31 +8,57 @@ import moment from "moment";
 function Jobs({ jobs }) {
   const router = useRouter();
   const [state, setState] = useState({
-    jobsList: jobs ? jobs.slice(0, 10) : [],
+    jobsList: [],
+    filteredJobsList: [],
     datePosted: [
       { "value": 1, "label": "Past Day" },
       { "value": 3, "label": "Past 3 Days" },
       { "value": 7, "label": "Past Week" },
-    ]
+    ],
+    selectedCompanyName: "Company Name",
+    selectedDatePosted: "Date Posted",
+    hasFilter: false,
+    showLoadMore: false,
+    itemsPerPage: 10,
+    loadMoreCounter: 1
   });
-  const companyName = jobs.map(job => job.companyName); // Getting all the company names
+  // Getting all the company names
+  const companyName = jobs ? jobs.map(job => job.companyName) : [];
+
+  // Use effect on load to get the itemsPerPage jobsList
+  useEffect(() => {
+    return setState({
+      ...state,
+      jobsList: jobs ? jobs.slice(0, state.itemsPerPage) : [],
+      showLoadMore: jobs.length > state.itemsPerPage,
+    })
+  }, []);
 
   // Filtering the posted jobs by company name
   const handleFilterByCompanyName = (name) => {
+    // Using the filter function of javascript to filter the data by name
     const filteredByCompanyNameJobs = jobs.filter(job => job.companyName === name);
-    const data = {
-      "jobs": filteredByCompanyNameJobs,
-    };
 
-    return setState({ ...state, jobsList: filteredByCompanyNameJobs });
+    // Resetting the loadMoreCounter
+    // Setting to true the hasFilter checker
+    // Adding to the filteredJobsList all the data get from the filter
+    // Showing the itemsPerPage in the jobsList
+    return setState({
+      ...state,
+      selectedCompanyName: name,
+      selectedDatePosted: "Date Posted",
+      hasFilter: true,
+      loadMoreCounter: 0,
+      jobsList: filteredByCompanyNameJobs.slice(0, state.itemsPerPage),
+      filteredJobsList: filteredByCompanyNameJobs
+    });
   }
 
   // Filtering the posted jobs by date posted
-  const handleFilterByDatePosted = (date) => {
-    let count = 0;
+  const handleFilterByDatePosted = (date, label) => {
     // Add to temporary variable the map value of the adjusted postedDate data for filtering
     const filteredByDatePostedJobs = jobs.filter(job => {
-      const { OBJpostingDate } = job;
+      const { OBJpostingDate, postedDate } = job;
       // convert to YYYY-MM-DD format using moment
       const datePosted = moment(OBJpostingDate).format('YYYY-MM-DD');
       // subtract the picked date from now and convert to YYYY-MM-DD format using moment
@@ -59,12 +85,46 @@ function Jobs({ jobs }) {
       }
     });
 
-    const data = {
-      "jobs": filteredByDatePostedJobs,
-    };
-
-    return setState({ ...state, jobsList: filteredByDatePostedJobs });
+    // Resetting the loadMoreCounter
+    // Setting to true the hasFilter checker
+    // Adding to the filteredJobsList all the data get from the filter
+    // Showing the itemsPerPage in the jobsList
+    return setState({
+      ...state,
+      selectedCompanyName: "Company Name",
+      selectedDatePosted: label,
+      hasFilter: true,
+      loadMoreCounter: 0,
+      jobsList: filteredByDatePostedJobs.slice(0, state.itemsPerPage),
+      filteredJobsList: filteredByDatePostedJobs
+    });
   }
+
+  const handleLoadMore = () => {
+    // Getting the loadedItemsLength
+    const loadedItemsLength = state.itemsPerPage * state.loadMoreCounter;
+    // Checking if the loadedItemsLength is less than the length of the jobs list
+    const loadMore = state.hasFilter ? loadedItemsLength < state.filteredJobsList.length : loadedItemsLength < jobs.length;
+
+    // Checking if there is still be a needed data to load
+    if (loadMore) {
+      // Multiplying the itemsPerPage multiplied to the loadMoreCounter that will increment every load more items from the list
+      const loadItems = state.itemsPerPage * (state.loadMoreCounter + 1);
+      // Checking if the filter button is on or not then getting the corresponding list based on the filter
+      return setState({
+        ...state,
+        jobsList: state.hasFilter ? state.filteredJobsList.slice(0, loadItems) : jobs.slice(0, loadItems),
+        loadMoreCounter: state.loadMoreCounter + 1,
+        showLoadMore: state.hasFilter ? loadItems < state.filteredJobsList.length : loadItems < jobs.length,
+      });
+    }
+
+    return setState({
+      ...state,
+      showLoadMore: false,
+    });
+  };
+
 
   if (router.isFallback) {
     return <h1>Loading...</h1>;
@@ -84,15 +144,15 @@ function Jobs({ jobs }) {
           <p className="text-2xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-4xl text-gray-400 self-center md:self-end lg:self-end xl:self-end 2xl:self-end tracking-normal font-normal antialiased">Jobs</p>
         </div>
         <div className="border-t-2 border-gray-100"></div>
-        <div className="flex flex-col md:flex-row lg:flex-row xl:flex-row 2xl:flex-row flex-wrap md:space-x-3 lg:space-x-3 xl:space-x-3 2xl:space-x-3">
-          <div className="flex-grow md:flex-initial lg:flex-initial xl:flex-initial 2xl:flex-initial mt-3">
+        <div className="flex flex-row space-x-2 md:flex-row lg:flex-row xl:flex-row 2xl:flex-row flex-wrap md:space-x-3 lg:space-x-3 xl:space-x-3 2xl:space-x-3">
+          <div className="flex-1 md:flex-initial lg:flex-initial xl:flex-initial 2xl:flex-initial mt-3">
             <button
-              className="dropdown:block relative px-3 py-2 text-sm font-semibold leading-relaxed text-gray-800 transition-colors duration-150 bg-white border border-gray-300 rounded-lg focus:outline-none hover:border-gray-600 focus:shadow-outline focus:border-gray-900"
+              className="dropdown:block h-full w-full relative px-3 py-2 text-sm font-semibold leading-relaxed text-gray-800 transition-colors duration-150 bg-white border border-gray-300 rounded-lg focus:outline-none hover:border-gray-600 focus:shadow-outline focus:border-gray-900"
               role="navigation"
               aria-haspopup="true"
             >
-              <div className="flex items-center">
-                <span className="px-2 text-gray-700">Company Name</span>
+              <div className="flex items-center justify-center">
+                <span className="px-2 text-gray-700 text-sm">Company Name</span>
                 <svg
                   className="w-4 h-4 text-gray-500 fill-current"
                   viewBox="0 0 20 20"
@@ -106,14 +166,14 @@ function Jobs({ jobs }) {
                 </svg>
               </div>
               <ul
-                className="absolute left-0 hidden w-auto p-2 mt-3 space-y-2 text-sm bg-white border border-gray-100 rounded-lg shadow-lg"
+                className="absolute h-96 overflow-y-scroll left-0 hidden w-auto p-2 mt-3 space-y-2 text-sm bg-white border border-gray-100 rounded-lg shadow-lg"
                 aria-label="submenu"
               >
                 {
                   companyName.map(name => {
                     return (
                       <li
-                        className="inline-block text-sm w-full bg-gray-200 px-2 py-1 font-medium text-gray-600 transition-colors duration-150 rounded-md hover:text-gray-900 focus:outline-none focus:shadow-outline hover:bg-gray-100"
+                        className={`inline-block text-sm w-full px-2 py-1 font-medium text-gray-600 transition-colors duration-150 rounded-md hover:text-gray-900 focus:outline-none focus:shadow-outline hover:bg-gray-100 ${state.selectedCompanyName === name ? "bg-gray-200" : ""}`}
                         onClick={() => { handleFilterByCompanyName(name) }}
                         key={name}
                       >
@@ -125,14 +185,14 @@ function Jobs({ jobs }) {
               </ul>
             </button>
           </div>
-          <div className="flex-grow md:flex-initial lg:flex-initial xl:flex-initial 2xl:flex-initial mt-3">
+          <div className="flex-1 md:flex-initial lg:flex-initial xl:flex-initial 2xl:flex-initial mt-3">
             <button
-              className="dropdown:block relative px-3 py-2 text-sm font-semibold leading-relaxed text-gray-800 transition-colors duration-150 bg-white border border-gray-300 rounded-lg focus:outline-none hover:border-gray-600 focus:shadow-outline focus:border-gray-900"
+              className="dropdown:block h-full w-full relative px-3 py-2 text-sm font-semibold leading-relaxed text-gray-800 transition-colors duration-150 bg-white border border-gray-300 rounded-lg focus:outline-none hover:border-gray-600 focus:shadow-outline focus:border-gray-900"
               role="navigation"
               aria-haspopup="true"
             >
-              <div className="flex items-center">
-                <span className="px-2 text-gray-700">Date Posted</span>
+              <div className="flex items-center justify-center">
+                <span className="px-2 text-gray-700">{state.selectedDatePosted}</span>
                 <svg
                   className="w-4 h-4 text-gray-500 fill-current"
                   viewBox="0 0 20 20"
@@ -153,8 +213,8 @@ function Jobs({ jobs }) {
                   state.datePosted.map(date => {
                     return (
                       <li
-                        className="inline-block text-sm w-full bg-gray-200 px-2 py-1 font-medium text-gray-600 transition-colors duration-150 rounded-md hover:text-gray-900 focus:outline-none focus:shadow-outline hover:bg-gray-100"
-                        onClick={() => { handleFilterByDatePosted(date.value) }}
+                        className={`inline-block text-sm w-full px-2 py-1 font-medium text-gray-600 transition-colors duration-150 rounded-md hover:text-gray-900 focus:outline-none focus:shadow-outline hover:bg-gray-100 ${state.selectedDatePosted === date.label ? "bg-gray-200" : ""}`}
+                        onClick={() => { handleFilterByDatePosted(date.value, date.label) }}
                         key={date.value}
                       >
                         {date.label}
@@ -167,6 +227,23 @@ function Jobs({ jobs }) {
           </div>
         </div>
         <JobsList jobs={state.jobsList} />
+        {state.showLoadMore && (
+          <div className="flex flex-row justify-center align-center mt-2 mb-10 ">
+            <button className="focus:outline-none" onClick={handleLoadMore}>
+              <svg
+                className="animate-bounce w-8 h-8 text-gray-500 fill-current"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                  fillRule="evenodd"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        )}
       </main>
     </Layout>
   )
